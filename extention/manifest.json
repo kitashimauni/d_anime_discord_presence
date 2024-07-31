@@ -1,0 +1,23 @@
+{
+    "name": "dAnimeDiscordPresence",
+    "version": "0.1.0",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+            "matches": [
+                "https://animestore.docomo.ne.jp/animestore/sc_d_pc*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "nativeMessaging",
+        "background",
+        "tabs"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    }
+}
