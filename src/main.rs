@@ -98,7 +98,7 @@ async fn main() -> Result<()>{
             let rp = ds::activity::ActivityBuilder::default()
                 .details(&data.title)
                 .state(&data.time);
-        
+
             tracing::info!(
                 "updated activity: {:?}",
                 client.discord.update_activity(rp).await
