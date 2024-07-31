@@ -95,7 +95,7 @@ async fn main() -> Result<()>{
         }
         if data.playing { 
             let rp = ds::activity::ActivityBuilder::default()
-                .state(data.title);
+                .state(&data.title);
         
             tracing::info!(
                 "updated activity: {:?}",
