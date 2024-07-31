@@ -12,6 +12,7 @@ const APP_ID: ds::AppId = 1267357061495128074;
 struct PresenceData{
     playing: bool,
     title: String,
+    time: String,
     connection: bool,
 }
 
@@ -95,7 +96,8 @@ async fn main() -> Result<()>{
         }
         if data.playing { 
             let rp = ds::activity::ActivityBuilder::default()
-                .state(&data.title);
+                .details(&data.title)
+                .state(&data.time);
         
             tracing::info!(
                 "updated activity: {:?}",
