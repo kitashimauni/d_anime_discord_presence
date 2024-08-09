@@ -6,17 +6,45 @@ const TIME_CLASS_NAME = "time";
 const TIME_ID_NAME = "#time";
 const VIDEO_TAG_NAME = "video";
 
+const TYPE_STOPPED = 0;
+const TYPE_PLAYING = 1;
+let type_now = TYPE_STOPPED;
+
+// generateUUID
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+const UUID = generateUUID();
+
+
 function getInfo() {
     let data = new Object();
+    data.uuid = UUID;
+    data.data = new Object();
 
     // playing?
     const videoElement = document.getElementsByTagName(VIDEO_TAG_NAME)[0];
     if (!videoElement) {
         console.log("Couldn't get playing status");
+        data.type = 0;
+        return data;
     } else {
-        data.playing = !Boolean(videoElement.paused);
+        let playing = !Boolean(videoElement.paused);
+        if(type_now === TYPE_STOPPED && playing) {
+            type_now = TYPE_PLAYING;
+            data.type = 2;
+            return data;
+        } else if(type_now === TYPE_PLAYING && !playing) {
+            type_now = TYPE_STOPPED;
+            data.type = 4;
+            return data;
+        }
     }
-
+    
     // title and episodes
     const titleElement = document.getElementsByClassName(TITLE_CLASS_NAME)[0];
     const episodeElement = document.getElementsByClassName(EPISODES_CLASS_NAME)[0];
@@ -27,13 +55,11 @@ function getInfo() {
         const title = titleElement.textContent;
         const episodes = episodeElement.textContent;
         const time = timeElement.querySelector(TIME_ID_NAME).textContent;
-        data.title = title + " " + episodes;
-        data.time = time;
+        data.data.title = title;
+        data.data.episodes = episodes;
+        data.data.time = time;
     }
-
-    data.connection = true;
-
-    // return data
+    
     return data;
 }
 
@@ -46,12 +72,18 @@ const sendMessage = () => {
 // sendMessage per 1 second
 setInterval(sendMessage, GETINFO_INTERVAL);
 
-// disconnect when close tab
+// register to background.js
+window.addEventListener("load", () => {
+    chrome.runtime.sendMessage({
+        "type": 1,
+        "uuid": UUID,
+    }, (response) => true)
+})
+
+// remove from background.js
 window.addEventListener("beforeunload", () => {
     chrome.runtime.sendMessage({
-        "playing": false,
-        "title": "",
-        "time": "",
-        "connection": false
+        "type": 5,
+        "uuid": UUID,
     }, (response) => true)
 });
