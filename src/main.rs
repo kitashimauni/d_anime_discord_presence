@@ -7,13 +7,16 @@ use tokio;
 use tracing_subscriber::fmt::writer::BoxMakeWriter;
 
 const APP_ID: ds::AppId = 1267357061495128074;
+const UPDATE_MESSAGE: &str = "3";
+const CLAER_MESSAGE: &str = "4";
+const DISCONNECT_MESSAGE: &str = "5";
 
 #[derive(Deserialize, Debug)]
 struct PresenceData{
-    playing: bool,
+    message_type: String,
     title: String,
+    episodes: String,
     time: String,
-    connection: bool,
 }
 
 struct Client{
@@ -73,7 +76,6 @@ async fn main() -> Result<()>{
 
     let stdin = io::stdin();
     let mut reader = BufReader::new(stdin.lock());
-    let mut displayed = false;
 
     loop {
         // read JSON length
@@ -90,28 +92,24 @@ async fn main() -> Result<()>{
         let input = String::from_utf8(json_buffer).expect("Invalid UTF-8 data");
         
         let data: PresenceData = serde_json::from_str(&input).expect("Invalid JSON data");
-        
-        if !data.connection {
-            break;
-        }
-        if data.playing { 
-            let rp = ds::activity::ActivityBuilder::default()
-                .details(&data.title)
-                .state(&data.time);
 
-            tracing::info!(
-                "updated activity: {:?}",
-                client.discord.update_activity(rp).await
-            );
-
-            displayed = true;
-        } else if !data.playing && displayed {
+        if data.message_type == CLAER_MESSAGE {
             tracing::info!(
                 "cleared activity: {:?}",
                 client.discord.clear_activity().await
             );
-
-            displayed = false;
+            continue;
+        } else if data.message_type == DISCONNECT_MESSAGE {
+            break;
+        } else if data.message_type == UPDATE_MESSAGE {
+            let rp = ds::activity::ActivityBuilder::default()
+                .details(format!("{} {}", &data.title, &data.episodes))
+                .state(&data.time);
+    
+            tracing::info!(
+                "updated activity: {:?}",
+                client.discord.update_activity(rp).await
+            );
         }
     }
 

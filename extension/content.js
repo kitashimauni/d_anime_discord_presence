@@ -34,18 +34,21 @@ function getInfo() {
         return data;
     } else {
         let playing = !Boolean(videoElement.paused);
-        if(type_now === TYPE_STOPPED && playing) {
+        if (type_now === TYPE_STOPPED && playing) {
             type_now = TYPE_PLAYING;
             data.type = 2;
             return data;
-        } else if(type_now === TYPE_PLAYING && !playing) {
+        } else if (type_now === TYPE_PLAYING && !playing) {
             type_now = TYPE_STOPPED;
             data.type = 4;
             return data;
+        } else if (type_now === TYPE_STOPPED && !playing) {
+            return null;
         }
     }
     
     // title and episodes
+    data.type = 3;
     const titleElement = document.getElementsByClassName(TITLE_CLASS_NAME)[0];
     const episodeElement = document.getElementsByClassName(EPISODES_CLASS_NAME)[0];
     const timeElement = document.getElementsByClassName(TIME_CLASS_NAME)[0];
@@ -66,6 +69,10 @@ function getInfo() {
 // send message to background
 const sendMessage = () => {
     let data = getInfo();
+    if (!data) {
+        console.log("here");
+        return; 
+    }
     chrome.runtime.sendMessage(data, (response) => true);
 }
 
