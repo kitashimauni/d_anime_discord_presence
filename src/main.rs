@@ -2,7 +2,7 @@ use std::io::{self, BufReader, Read};
 
 use serde::Deserialize;
 use serde_json::Result;
-use discord_sdk::{self as ds};
+use discord_sdk::{self as ds,};
 use tokio;
 use tracing_subscriber::fmt::writer::BoxMakeWriter;
 
@@ -104,6 +104,10 @@ async fn main() -> Result<()>{
         } else if data.message_type == UPDATE_MESSAGE {
             let rp = ds::activity::ActivityBuilder::default()
                 .details(format!("{} {}", &data.title, &data.episodes))
+                .assets(
+                    ds::activity::Assets::default().large("tsumugi", Some("Watching anime")),
+                )
+                .kind(ds::activity::ActivityKind::Watching)
                 .state(&data.time);
     
             tracing::info!(
