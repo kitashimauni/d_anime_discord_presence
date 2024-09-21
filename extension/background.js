@@ -69,7 +69,7 @@ function started(data) {
 // send to native host
 function send(data) {
     if (!isNativeConnected) assertNative();
-    if (isNativeConnected && data.uuid === playing_uuid) {
+    if (isNativeConnected && data.uuid === playing_uuid && !data.is_displayed) {
         data.data.message_type = "3";
         port.postMessage(data.data);
     }

@@ -10,6 +10,9 @@ const TYPE_STOPPED = 0;
 const TYPE_PLAYING = 1;
 let type_now = TYPE_STOPPED;
 
+let is_displayed = false;
+let prev_time = null;
+
 // generateUUID
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -41,6 +44,7 @@ function getInfo() {
         } else if (type_now === TYPE_PLAYING && !playing) {
             type_now = TYPE_STOPPED;
             data.type = 4;
+            is_displayed = false;
             return data;
         } else if (type_now === TYPE_STOPPED && !playing) {
             return null;
@@ -58,9 +62,31 @@ function getInfo() {
         const title = titleElement.textContent;
         const episodes = episodeElement.textContent;
         const time = timeElement.querySelector(TIME_ID_NAME).textContent;
+        const time_splited = time.split(" / ");
+        if (time_splited[0].split(":").length === 2) {
+            time_splited[0] = "00:" + time_splited[0];
+        }
+
+        data.is_displayed = is_displayed;
         data.data.title = title;
         data.data.episodes = episodes;
-        data.data.time = time;
+        data.data.current_time = time_splited[0];
+        data.data.total_duration = time_splited[1];
+
+        if (!prev_time) {
+            is_displayed = true;
+        } else {
+            [hours, minutes, seconds] = prev_time.split(":").map(Number);
+            prev_sec = hours * 3600 + minutes * 60 + seconds;
+            [hours, minutes, seconds] = data.data.current_time.split(":").map(Number);
+            now_sec = hours * 3600 + minutes * 60 + seconds;
+            if (Math.abs(now_sec - prev_sec) > 3) {
+                is_displayed = false;
+            } else {
+                is_displayed = true;
+            }
+        }
+        prev_time = data.data.current_time;
     }
     
     return data;
@@ -84,7 +110,7 @@ window.addEventListener("load", () => {
     chrome.runtime.sendMessage({
         "type": 1,
         "uuid": UUID,
-    }, (response) => true)
+    }, (response) => true);
 })
 
 // remove from background.js
@@ -92,5 +118,5 @@ window.addEventListener("beforeunload", () => {
     chrome.runtime.sendMessage({
         "type": 5,
         "uuid": UUID,
-    }, (response) => true)
+    }, (response) => true);
 });

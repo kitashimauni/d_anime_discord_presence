@@ -1,5 +1,6 @@
 use std::io::{self, BufReader, Read};
 
+use chrono::{Duration, Local};
 use serde::Deserialize;
 use serde_json::Result;
 use discord_sdk::{self as ds,};
@@ -16,7 +17,8 @@ struct PresenceData{
     message_type: String,
     title: String,
     episodes: String,
-    time: String,
+    current_time: String,
+    total_duration: String,
 }
 
 struct Client{
@@ -61,6 +63,24 @@ async fn make_client() -> Client {
     }
 }
 
+fn parse_time_string(time_str: &str) -> Duration {
+    // Split time_str into hours, minutes, seconds
+    let parts: Vec<&str> = time_str.split(':').collect();
+    
+    // Handle different time formats (HH:MM:SS or MM:SS)
+    let (hours, minutes, seconds) = match parts.len() {
+        3 => (
+            parts[0].parse::<i64>().unwrap_or(0), // hours
+            parts[1].parse::<i64>().unwrap_or(0), // minutes
+            parts[2].parse::<i64>().unwrap_or(0), // seconds
+        ),
+        _ => (0, 0, 0), // default to zero if format is invalid
+    };
+    
+    // Create a Duration from the parsed values
+    Duration::seconds(hours * 3600 + minutes * 60 + seconds)
+}
+
 #[tokio::main]
 async fn main() -> Result<()>{
     // Make client
@@ -103,12 +123,13 @@ async fn main() -> Result<()>{
             break;
         } else if data.message_type == UPDATE_MESSAGE {
             let rp = ds::activity::ActivityBuilder::default()
-                .details(format!("{} {}", &data.title, &data.episodes))
                 .assets(
                     ds::activity::Assets::default().large("tsumugi", Some("Watching anime")),
                 )
                 .kind(ds::activity::ActivityKind::Watching)
-                .state(&data.time);
+                .details(&data.title)
+                .state(format!("{} / {}", &data.episodes, &data.total_duration))
+                .start_timestamp((Local::now() - parse_time_string(&data.current_time)).timestamp());
     
             tracing::info!(
                 "updated activity: {:?}",
