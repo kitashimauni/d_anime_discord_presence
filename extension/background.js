@@ -29,7 +29,8 @@ function update_playing_uuid() {
             message_type: "5",
             title: "",
             episodes: "",
-            time: "",
+            current_time: "",
+            total_duration: "",
         });
         port.disconnect();
         isNativeConnected = false;
@@ -42,7 +43,8 @@ function update_playing_uuid() {
             message_type: "4",
             title: "",
             episodes: "",
-            time: "",
+            current_time: "",
+            total_duration: "",
         });
         playing_uuid = "";
         return;
