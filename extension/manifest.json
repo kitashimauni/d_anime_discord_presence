@@ -14,8 +14,7 @@
     ],
     "permissions": [
         "nativeMessaging",
-        "background",
-        "tabs"
+        "background"
     ],
     "background": {
         "service_worker": "background.js"
