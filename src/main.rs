@@ -124,7 +124,7 @@ async fn main() -> Result<()>{
         } else if data.message_type == UPDATE_MESSAGE {
             let rp = ds::activity::ActivityBuilder::default()
                 .assets(
-                    ds::activity::Assets::default().large("tsumugi", Some("Watching anime")),
+                    ds::activity::Assets::default().large("presence_icon", Some("Watching anime")),
                 )
                 .kind(ds::activity::ActivityKind::Watching)
                 .details(&data.title)
