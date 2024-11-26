@@ -5,8 +5,6 @@ $NAME="d_anime_discord_presence"
 $EXTENSION_DOMEIN="com.dadp.discord.presence"
 $EXTENSION_ID="annngonnefpokjedciknbbnbngdjfdnk"
 $JSON_NAME="main.json"
-$EXTENSION_ASSET_ID="208979921"
-$NATIVE_APP_ASSET_ID="208977294"
 $TEMP_DIR="$env:TEMP/$NAME"
 
 # Define the path to download
@@ -40,7 +38,7 @@ New-Item -Path "$TEMP_DIR" -ItemType "directory" | Out-Null
 # Check fetch URL
 $LATEST_DATA = (curl -L "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/latest" | ConvertFrom-Json)
 
-# Download files
+# Download binary files
 Write-Host "`r`n[Info] Downloading`r`n"
 foreach ($asset in $LATEST_DATA.assets) {
     $FILE_NAME = $asset.name
