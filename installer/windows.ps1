@@ -11,13 +11,13 @@ $TEMP_DIR="$env:TEMP/$NAME"
 
 # Define the path to download
 if (Test-Path $env:ProgramFiles) {
-    $DOWNLOAD_DIR=$env:ProgramFiles
+    $PROGRAM_FILES_DIR=$env:ProgramFiles
 } else {
     Write-Host "[Error] env:ProgramFiles is not exist" -ForegroundColor Red
     exit 1
 }
-Write-Host "[Info] Install to $DOWNLOAD_DIR"
-$INSTALL_DIR="$DOWNLOAD_DIR/$NAME"
+Write-Host "[Info] Install to $PROGRAM_FILES_DIR"
+$INSTALL_DIR="$PROGRAM_FILES_DIR/$NAME"
 
 # Check temp directory to download binary
 while (Test-Path $TEMP_DIR) {
@@ -37,11 +37,15 @@ while (Test-Path $TEMP_DIR) {
 # Create temp directory
 New-Item -Path "$TEMP_DIR" -ItemType "directory" | Out-Null
 
+# Check fetch URL
+$LATEST_DATA = (curl -L "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/latest" | ConvertFrom-Json)
 
 # Download files
 Write-Host "`r`n[Info] Downloading`r`n"
-curl -o "$TEMP_DIR/$NAME.exe" "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/assets/$NATIVE_APP_ASSET_ID"
-curl -o "$TEMP_DIR/$NAME.crx" "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/assets/$EXTENSION_ASSET_ID"
+foreach ($asset in $LATEST_DATA.assets) {
+    $FILE_NAME = $asset.name
+    curl -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
+}
 Write-Host "`r`n[Info] Download finished`r`n"
 
 # JSON data for native app
@@ -57,7 +61,27 @@ $JSON_CONTENT = @"
 }
 "@
 
-# JSON をファイルに書き込み
 $JSON_CONTENT | Out-File -FilePath "$TEMP_DIR/$JSON_NAME" -Encoding UTF8
-
 Write-Host "[Info] Created main.json"
+
+# Copy the files to the destination directory
+robocopy "$TEMP_DIR" "$INSTALL_DIR" /E /PURGE | Out-Null
+if ($LastExitCode -ge 8) {
+    Write-Host "[Error] Filed to copy directory from $TEMP_DIR to $INSTALL_DIR" -ForegroundColor Red
+    exit 1
+}
+Write-Host "[info] Copy succeeded"
+
+# Clean up
+Remove-Item "$TEMP_DIR" -Force -Recurse
+if (Test-Path $TEMP_DIR) {
+    Write-Host "[info] Failed to clean up, but install finished successfully" -ForegroundColor Yellow
+}
+Write-Host "[info] Clean up finished"
+
+# Regist to register
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\Extensions\$EXTENSION_ID" /v "path" /t "REG_SZ" /d "$INSTALL_DIR/$NAME.crx" /f
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR/$JSON_NAME" /f
+
+Write-Host "========================================"
+Write-Host "Installation completed successfully!" -ForegroundColor Green
