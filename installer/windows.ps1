@@ -3,7 +3,7 @@
 
 $NAME="d_anime_discord_presence"
 $EXTENSION_DOMEIN="com.dadp.discord.presence"
-$EXTENSION_ID="annngonnefpokjedciknbbnbngdjfdnk"
+$EXTENSION_ID="ifenbhbjocjihjlmbbmdegolkpjmecag"
 $JSON_NAME="main.json"
 $TEMP_DIR="$env:TEMP/$NAME"
 
@@ -78,7 +78,7 @@ if (Test-Path $TEMP_DIR) {
 Write-Host "[info] Clean up finished"
 
 # Regist to register
-reg add "HKEY_CURRENT_USER\Software\Google\Chrome\Extensions\$EXTENSION_ID" /v "path" /t "REG_SZ" /d "$INSTALL_DIR/$NAME.crx" /f
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\Extensions\$EXTENSION_ID" /v "update_url" /t "REG_SZ" /d "https://clients2.google.com/service/update2/crx" /f
 reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR/$JSON_NAME" /f
 
 Write-Host "========================================"
