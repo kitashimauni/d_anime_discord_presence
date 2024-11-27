@@ -15,7 +15,7 @@ if (Test-Path $env:ProgramFiles) {
     exit 1
 }
 Write-Host "[Info] Install to $PROGRAM_FILES_DIR"
-$INSTALL_DIR="$PROGRAM_FILES_DIR/$NAME"
+$INSTALL_DIR="$PROGRAM_FILES_DIR\$NAME"
 
 # Check temp directory to download binary
 while (Test-Path $TEMP_DIR) {
@@ -35,11 +35,12 @@ while (Test-Path $TEMP_DIR) {
 # Create temp directory
 New-Item -Path "$TEMP_DIR" -ItemType "directory" | Out-Null
 
+# Download binary files
+Write-Host "`r`n[Info] Downloading`r`n"
+
 # Check fetch URL
 $LATEST_DATA = (curl -L "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/latest" | ConvertFrom-Json)
 
-# Download binary files
-Write-Host "`r`n[Info] Downloading`r`n"
 foreach ($asset in $LATEST_DATA.assets) {
     $FILE_NAME = $asset.name
     curl -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
@@ -51,7 +52,7 @@ $JSON_CONTENT = @"
 {
     "name": "$EXTENSION_DOMEIN",
     "description": "d-Anime Discord Presence",
-    "path": "$INSTALL_DIR/$NAME.exe",
+    "path": "$NAME.exe",
     "type": "stdio",
     "allowed_origins": [
         "chrome-extension://$EXTENSION_ID/"
@@ -78,8 +79,7 @@ if (Test-Path $TEMP_DIR) {
 Write-Host "[info] Clean up finished"
 
 # Regist to register
-reg add "HKEY_CURRENT_USER\Software\Google\Chrome\Extensions\$EXTENSION_ID" /v "update_url" /t "REG_SZ" /d "https://clients2.google.com/service/update2/crx" /f
-reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR/$JSON_NAME" /f
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR\$JSON_NAME" /f
 
 Write-Host "========================================"
 Write-Host "Installation completed successfully!" -ForegroundColor Green
