@@ -1,5 +1,5 @@
 # d_anime_discord_presence installer for Windows (PowerShell)
-# This download v0.1.0-beta 
+# This download latest version
 
 $NAME="d_anime_discord_presence"
 $EXTENSION_DOMEIN="com.dadp.discord.presence"
@@ -45,6 +45,11 @@ foreach ($asset in $LATEST_DATA.assets) {
     $FILE_NAME = $asset.name
     curl -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
 }
+if ($LastExitCode -ne 0) {
+    Write-Host "[Error] Filed to download files" -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "`r`n[Info] Download finished`r`n"
 
 # JSON data for native app
@@ -79,7 +84,12 @@ if (Test-Path $TEMP_DIR) {
 Write-Host "[info] Clean up finished"
 
 # Regist to register
-reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR\$JSON_NAME" /f
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\$EXTENSION_DOMEIN" /t "REG_SZ" /d "$INSTALL_DIR\$JSON_NAME" /f | Out-Null
+if ($LastExitCode -ne 0) {
+    Write-Host "[Error] Filed to regist config" -ForegroundColor Red
+    exit 1
+}
+Write-Host "[info] Config registed"
 
 Write-Host "========================================"
 Write-Host "Installation completed successfully!" -ForegroundColor Green
