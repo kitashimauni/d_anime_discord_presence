@@ -39,11 +39,11 @@ New-Item -Path "$TEMP_DIR" -ItemType "directory" | Out-Null
 Write-Host "`r`n[Info] Downloading`r`n"
 
 # Check fetch URL
-$LATEST_DATA = (curl -L "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/latest" | ConvertFrom-Json)
+$LATEST_DATA = (curl.exe -L "https://api.github.com/repos/kitashimauni/d_anime_discord_presence/releases/latest" | ConvertFrom-Json)
 
 foreach ($asset in $LATEST_DATA.assets) {
     $FILE_NAME = $asset.name
-    curl -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
+    curl.exe -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
 }
 if ($LastExitCode -ne 0) {
     Write-Host "[Error] Filed to download files" -ForegroundColor Red
