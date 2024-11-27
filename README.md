@@ -2,13 +2,23 @@
 
 dアニメストアで再生中の作品名と時間をDiscordのPresenceに表示するChrome拡張&NativeHost(Rust製).
 
+ <img src="https://github.com/kitashimauni/d_anime_discord_presence/blob/main/assets/screenshot1.png" width="40%" />
+
+
 ## 仕組み
-Chrome拡張は作品名などを取得し, ローカルのホストアプリケーションにデータを送信.
-NativeHostは標準入力を介してChrome拡張からデータを受け取りDiscord側に送信.
+Chrome拡張は作品名などを取得し, ローカルのホストアプリケーションにデータを送信します.
+
+NativeHostは標準入力を介して[Chrome拡張](https://chromewebstore.google.com/detail/danimediscordpresence/ifenbhbjocjihjlmbbmdegolkpjmecag)からデータを受け取りDiscord側に送信します.
 
 ## インストール
-現在Chrome拡張の申請中です.
-これが完了次第インストールスクリプトを整備します.
+### Windows
+以下のコマンドをPowerShell(管理者権限)で実行してください.
+自動でChromeに拡張が追加されるのでそれをOnにすることで使えます.
+
+```
+iwr "https://raw.githubusercontent.com/kitashimauni/d_anime_discord_presence/main/installer/windows.ps1" | iex
+```
+`Program Files`以下に必要なファイルを保存するため管理者権限で実行する必要があります.
 
 ## 開発者向け
 1. このレポジトリをクローンしてビルド
