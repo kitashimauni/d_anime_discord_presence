@@ -18,7 +18,7 @@ echo "[Info] Initialized $TEMP_DIR"
 [ -d "$EXTENSION_DIR" ] || mkdir -p "$EXTENSION_DIR"
 
 # Add extension
-echo '{ "external_update_url": "https://clients2.google.com/service/update2/crx" }' > $EXTENSION_DIR/$EXTENSION_ID.json
+echo '{ "external_update_url": "https://clients2.google.com/service/update2/crx" }' > "$EXTENSION_DIR/$EXTENSION_ID.json"
 
 echo "[info] Added extension"
 
@@ -35,7 +35,7 @@ $JSON_CONTENT = '{
 [ -d "$CONFIG_JSON_DIR" ] || mkdir -p "$CONFIG_JSON_DIR"
 
 # Add config json
-echo $JSON_CONTENT > $CONFIG_JSON_DIR/$EXTENSION_DOMEIN.json
+echo $JSON_CONTENT > "$CONFIG_JSON_DIR/$EXTENSION_DOMEIN.json"
 echo "[info] Added config json"
 
 # Clean up
