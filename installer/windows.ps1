@@ -69,7 +69,7 @@ $JSON_CONTENT | Out-File -FilePath "$TEMP_DIR/$JSON_NAME" -Encoding UTF8
 Write-Host "[Info] Created main.json"
 
 # Copy the files to the destination directory
-robocopy "$TEMP_DIR" "$INSTALL_DIR" /E /PURGE | Out-Null
+robocopy "$TEMP_DIR" "$INSTALL_DIR" /E /PURGE /r:0 | Out-Null
 if ($LastExitCode -ge 8) {
     Write-Host "[Error] Filed to copy directory from $TEMP_DIR to $INSTALL_DIR" -ForegroundColor Red
     exit 1
