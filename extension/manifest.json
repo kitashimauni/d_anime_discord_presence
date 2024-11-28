@@ -1,6 +1,6 @@
 {
     "name": "dAnimeDiscordPresence",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "dアニメストアでの視聴ステータスをDiscordに表示する拡張です。",
     "icons": {
         "16": "icon16.png",
