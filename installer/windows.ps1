@@ -43,7 +43,9 @@ $LATEST_DATA = (curl.exe -L "https://api.github.com/repos/kitashimauni/d_anime_d
 
 foreach ($asset in $LATEST_DATA.assets) {
     $FILE_NAME = $asset.name
-    curl.exe -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
+    if ($FILE_NAME.Contains("exe")) {
+        curl.exe -L -H 'Accept: application/octet-stream' -o "$TEMP_DIR/$FILE_NAME" $asset.url
+    }
 }
 if ($LastExitCode -ne 0) {
     Write-Host "[Error] Filed to download files" -ForegroundColor Red
