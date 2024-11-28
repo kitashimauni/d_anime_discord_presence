@@ -1,6 +1,6 @@
 # dアニメ Discord Presence
 
-dアニメストアで再生中の作品名と時間をDiscordのPresenceに表示するChrome拡張&NativeHost(Rust製).
+dアニメストアで再生中の作品名と時間をDiscordのPresenceに表示するChrome拡張&NativeMessagingHostアプリケーション(Rust製).
 
  <img src="https://github.com/kitashimauni/d_anime_discord_presence/blob/main/assets/screenshot1.png" width="40%" />
 
@@ -8,17 +8,25 @@ dアニメストアで再生中の作品名と時間をDiscordのPresenceに表�
 ## 仕組み
 Chrome拡張は作品名などを取得し, ローカルのホストアプリケーションにデータを送信します.
 
-NativeHostは標準入力を介して[Chrome拡張](https://chromewebstore.google.com/detail/danimediscordpresence/ifenbhbjocjihjlmbbmdegolkpjmecag)からデータを受け取りDiscord側に送信します.
+NativeMessagingHostは標準入力を介して[Chrome拡張](https://chromewebstore.google.com/detail/danimediscordpresence/ifenbhbjocjihjlmbbmdegolkpjmecag)からデータを受け取りDiscord側に送信します.
 
 ## インストール
+いずれも自動でChromeに拡張が追加されるのでそれを有効にすることで使えます. 追加されない場合は再起動を試してください.
+アニメを再生する際, 時間表示部分をクリックして {現在の再生時間/総再生時間} となるようにしてください(このようにしなくても動作するように修正予定です).
 ### Windows
 以下のコマンドをPowerShell(管理者権限)で実行してください.
-自動でChromeに拡張が追加されるのでそれをOnにすることで使えます.
 
 ```
 iwr "https://raw.githubusercontent.com/kitashimauni/d_anime_discord_presence/main/installer/windows.ps1" | iex
 ```
 `Program Files`以下に必要なファイルを保存するため管理者権限で実行する必要があります.
+
+### MacOS
+以下のコマンドをターミナル上で実行してください.
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kitashimauni/d_anime_discord_presence/main/installer/mac.sh)"
+```
 
 ## 開発者向け
 1. このレポジトリをクローンしてビルド
