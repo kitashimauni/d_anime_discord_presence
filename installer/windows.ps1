@@ -93,5 +93,12 @@ if ($LastExitCode -ne 0) {
 }
 Write-Host "[info] Config registed"
 
+reg add "HKEY_CURRENT_USER\Software\Google\Chrome\Extensions\$EXTENSION_ID" /t "REG_SZ" /v "update_url" /d "https://clients2.google.com/service/update2/crx" /f | Out-Null
+if ($LastExitCode -ne 0) {
+    Write-Host "[Error] Filed to regist config" -ForegroundColor Red
+    exit 1
+}
+Write-Host "[info] Added Extension"
+
 Write-Host "========================================"
 Write-Host "Installation completed successfully!" -ForegroundColor Green
